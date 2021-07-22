@@ -15,12 +15,27 @@ export default class App extends Component {
       { id: uuidv4(), name: "Annie Copeland", number: "227-91-26" },
     ],
   };
-  
 
   state = {
     contacts: [...this.props.contacts],
     filter: "",
   };
+
+  componentDidMount() {
+    if (localStorage.getItem("contacts")) {
+      this.setState({
+        contacts: JSON.parse(localStorage.getItem("contacts")),
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { contacts } = this.state;
+    console.log(prevState.contacts);
+    if (prevState.contacts !== contacts) {
+      localStorage.setItem("contacts", JSON.stringify(contacts));
+    }
+  }
 
   addContact = (data) => {
     this.setState({
@@ -42,13 +57,14 @@ export default class App extends Component {
     );
   };
 
-  deleteContact = contactID => {
+  deleteContact = (contactID) => {
     // console.log(contactID)
-    this.setState(prevState => (
-      {
-      contacts: prevState.contacts.filter(contact => contact.id !== contactID),
-      }))
-  }
+    this.setState((prevState) => ({
+      contacts: prevState.contacts.filter(
+        (contact) => contact.id !== contactID
+      ),
+    }));
+  };
   render() {
     const { filter } = this.state;
     const { changeFilter, addContact } = this;
@@ -56,7 +72,10 @@ export default class App extends Component {
       <>
         <Form addContactItem={addContact} contacts={this.state.contacts} />
         <Filter value={filter} onChange={changeFilter} />
-        <ContactList itemsRender={this.visibleItems()} deleteItem={this.deleteContact} />
+        <ContactList
+          itemsRender={this.visibleItems()}
+          deleteItem={this.deleteContact}
+        />
       </>
     );
   }
