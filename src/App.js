@@ -26,6 +26,7 @@ export default class App extends Component {
       this.setState({
         contacts: JSON.parse(localStorage.getItem("contacts")),
       });
+      
     }
   }
 
